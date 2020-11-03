@@ -22,7 +22,7 @@
   <run_depend>nav_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>tf2_ros</run_depend>
-  <run_depend>libboost-system1.65-dev</run_depend>
+  <run_depend>libboost-system</run_depend>
 
   <export>
       <rviz plugin="plugin_description.xml"/>
