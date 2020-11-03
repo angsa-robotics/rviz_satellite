@@ -14,6 +14,7 @@
   <build_depend>rviz_common</build_depend>
   <build_depend>rviz_default_plugins</build_depend>
   <build_depend>sensor_msgs</build_depend>
+  <build_depend>libboost-system-dev</build_depend>
 
   <run_depend>rclcpp</run_depend>
   <run_depend>rviz_common</run_depend>
@@ -21,6 +22,7 @@
   <run_depend>nav_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>tf2_ros</run_depend>
+  <run_depend>libboost-system1.65-dev</run_depend>
 
   <export>
       <rviz plugin="plugin_description.xml"/>
