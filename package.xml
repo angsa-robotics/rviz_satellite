@@ -13,9 +13,10 @@
   <depend>rclcpp</depend>
   <depend>rviz_common</depend>
   <depend>rviz_default_plugins</depend>
-  <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>tf2_ros</depend>
+  <depend>geodesy</depend>
+  <depend>angles</depend>
 
   <build_depend>qtbase5-dev</build_depend>
   <build_depend>libboost-system-dev</build_depend>
