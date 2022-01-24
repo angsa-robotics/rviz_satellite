@@ -490,7 +490,7 @@ void AerialMapDisplay::update(float, float)
     // get transformation of sensor frame
     get_fixed_frame_transform_fallback_to_latest(
       context_->getFrameManager(),
-      last_fix_->header.frame_id, t, tf_tolerance(), sensor_translation,
+      last_fix_->header.frame_id, last_fix_->header.stamp, tf_tolerance(), sensor_translation,
       _ignored_orientation);
     setStatus(rviz_common::properties::StatusProperty::Ok, TRANSFORM_STATUS, "Transform OK");
   } catch (const rviz_common::transformation::FrameTransformerException & e) {
