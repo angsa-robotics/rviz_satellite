@@ -60,7 +60,7 @@ using sensor_msgs::msg::NavSatFix;
 
 // disable cpplint: not using string as const char*
 // declaring as std::string and QString to avoid copies
-const std::string AerialMapDisplay::MAP_FRAME = "map"; // NOLINT
+std::string AerialMapDisplay::MAP_FRAME = "map_enu"; // NOLINT
 const QString AerialMapDisplay::MESSAGE_STATUS = "Message"; // NOLINT
 const QString AerialMapDisplay::TILE_REQUEST_STATUS = "TileRequest"; // NOLINT
 const QString AerialMapDisplay::PROPERTIES_STATUS = "Properties"; // NOLINT
@@ -84,6 +84,13 @@ AerialMapDisplay::AerialMapDisplay()
     " drawn behind everything else.",
     this, SLOT(updateDrawUnder()));
   draw_under_property_->setShouldBeSaved(true);
+
+  // properties for map
+  fixed_frame_property_ =
+    new StringProperty(
+    "Fixed frame", "map_enu", "frame id onto which to project city view tile", this,
+    SLOT(updateFixedFrame()));
+  fixed_frame_property_->setShouldBeSaved(true);
 
   // properties for map
   tile_url_property_ =
@@ -192,6 +199,15 @@ void AerialMapDisplay::updateDrawUnder()
       object.setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
     }
   }
+}
+
+void AerialMapDisplay::updateFixedFrame()
+{
+  MAP_FRAME = fixed_frame_property_->getStdString();
+  // updated tile url may work
+  resetTileServerError();
+  // rebuild on next received message
+  resetMap();
 }
 
 void AerialMapDisplay::updateTileUrl()
