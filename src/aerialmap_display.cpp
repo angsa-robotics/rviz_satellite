@@ -60,7 +60,7 @@ using sensor_msgs::msg::NavSatFix;
 
 // disable cpplint: not using string as const char*
 // declaring as std::string and QString to avoid copies
-std::string AerialMapDisplay::MAP_FRAME = "map_enu"; // NOLINT
+std::string AerialMapDisplay::PROJECTION_FRAME = "map_enu"; // NOLINT
 const QString AerialMapDisplay::MESSAGE_STATUS = "Message"; // NOLINT
 const QString AerialMapDisplay::TILE_REQUEST_STATUS = "TileRequest"; // NOLINT
 const QString AerialMapDisplay::PROPERTIES_STATUS = "Properties"; // NOLINT
@@ -86,11 +86,11 @@ AerialMapDisplay::AerialMapDisplay()
   draw_under_property_->setShouldBeSaved(true);
 
   // properties for map
-  fixed_frame_property_ =
+  projection_frame_property_ =
     new StringProperty(
-    "Fixed frame", "map_enu", "frame id onto which to project city view tile", this,
+    "Projection frame", "map_enu", "frame id onto which to project the aerial map. Expected: map frame as ENU.", this,
     SLOT(updateFixedFrame()));
-  fixed_frame_property_->setShouldBeSaved(true);
+  projection_frame_property_->setShouldBeSaved(true);
 
   // properties for map
   tile_url_property_ =
@@ -203,7 +203,7 @@ void AerialMapDisplay::updateDrawUnder()
 
 void AerialMapDisplay::updateFixedFrame()
 {
-  MAP_FRAME = fixed_frame_property_->getStdString();
+  PROJECTION_FRAME = projection_frame_property_->getStdString();
   // updated tile url may work
   resetTileServerError();
   // rebuild on next received message
@@ -408,7 +408,6 @@ static void get_fixed_frame_transform_fallback_to_latest(
       }
     }
   }
-
   position = rviz_common::pointMsgToOgre(pose_out.pose.position);
   orientation = rviz_common::quaternionMsgToOgre(pose_out.pose.orientation);
 }
@@ -474,20 +473,24 @@ void AerialMapDisplay::update(float, float)
   try {
     // get transformation of fixed frame to map, to set the aerial map orientation to be aligned with ENU
     get_fixed_frame_transform_fallback_to_latest(
-      context_->getFrameManager(), MAP_FRAME, t, tf_tolerance(), _ignored_translation,
+      context_->getFrameManager(), PROJECTION_FRAME, t, tf_tolerance(), _ignored_translation,
       orientation_to_map);
     setStatus(
       rviz_common::properties::StatusProperty::Ok, ORIENTATION_STATUS,
       "Map transform OK");
   } catch (const rviz_common::transformation::FrameTransformerException & e) {
     setStatus(
-      rviz_common::properties::StatusProperty::Ok, TRANSFORM_STATUS, e.what());
+      rviz_common::properties::StatusProperty::Error, ORIENTATION_STATUS, e.what());
+      return;
   }
 
   Ogre::Vector3 sensor_translation;
   Ogre::Quaternion _ignored_orientation;
   try {
-    // get transformation of sensor frame
+    // get transformation of sensor frame i.e. translation from gps frame to map frame
+    // we want the transform between the gps frame and map frame at the time
+    // that the last fix message was received, and not at current time
+    // This avoids the aerial map being dragged by the robot's motion between fix messages
     get_fixed_frame_transform_fallback_to_latest(
       context_->getFrameManager(),
       last_fix_->header.frame_id, last_fix_->header.stamp, tf_tolerance(), sensor_translation,

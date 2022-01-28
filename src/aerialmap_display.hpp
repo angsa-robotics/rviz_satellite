@@ -84,7 +84,7 @@ protected:
   TileCoordinate centerTile() const;
 
   rviz_common::properties::StringProperty * tile_url_property_ = nullptr;
-  rviz_common::properties::StringProperty * fixed_frame_property_ = nullptr;
+  rviz_common::properties::StringProperty * projection_frame_property_ = nullptr;
   rviz_common::properties::IntProperty * zoom_property_ = nullptr;
   rviz_common::properties::IntProperty * blocks_property_ = nullptr;
   rviz_common::properties::FloatProperty * alpha_property_ = nullptr;
@@ -101,7 +101,7 @@ protected:
   sensor_msgs::msg::NavSatFix::ConstSharedPtr last_fix_;
   bool tile_server_had_errors_ {false};
 
-  static std::string MAP_FRAME;
+  static std::string PROJECTION_FRAME; // Frame on which to project aerial map onto, we make it parametrizable in case map frame isn't ENU for example
   static const QString MESSAGE_STATUS;
   static const QString TILE_REQUEST_STATUS;
   static const QString PROPERTIES_STATUS;
