@@ -52,7 +52,7 @@ public:
 protected Q_SLOTS:
   void updateAlpha();
   void updateDrawUnder();
-  void updateFixedFrame();
+  void updateProjectionFrame();
   void updateTileUrl();
   void updateZoom();
   void updateBlocks();
