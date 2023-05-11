@@ -151,10 +151,12 @@ void AerialMapDisplay::onInitialize()
 void AerialMapDisplay::onEnable()
 {
   scene_node_->setVisible(true);
+  RTDClass::onEnable();
 }
 
 void AerialMapDisplay::onDisable()
 {
+  RTDClass::onDisable();
   scene_node_->setVisible(false);
   resetTileServerError();
   resetMap();
