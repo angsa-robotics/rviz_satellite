@@ -89,7 +89,7 @@ AerialMapDisplay::AerialMapDisplay()
   projection_frame_property_ =
     new StringProperty(
     "Projection frame", "map_enu", "frame id onto which to project the aerial map. Expected: map frame as ENU.", this,
-    SLOT(updateFixedFrame()));
+    SLOT(updateProjectionFrame()));
   projection_frame_property_->setShouldBeSaved(true);
 
   // properties for map
@@ -201,7 +201,7 @@ void AerialMapDisplay::updateDrawUnder()
   }
 }
 
-void AerialMapDisplay::updateFixedFrame()
+void AerialMapDisplay::updateProjectionFrame()
 {
   PROJECTION_FRAME = projection_frame_property_->getStdString();
   // updated tile url may work
