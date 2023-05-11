@@ -35,9 +35,19 @@ std::string tileURL(const TileId & tile_id)
 }
 
 /**
+ * 2D vector struct with double precision
+ * Ogre::Vector2 does not provide double but float precision
+ * which leads to numerical errors computing the tile offset
+ */
+struct Vector2Double {
+  const double x;
+  const double y;
+};
+
+/**
  * @see https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames for explanation of these calculations.
  */
-Ogre::Vector2 computeTileCoordinate(const sensor_msgs::msg::NavSatFix & point, int zoom)
+Vector2Double computeTileCoordinate(const sensor_msgs::msg::NavSatFix & point, int zoom)
 {
   if (zoom > MAX_ZOOM) {
     throw std::invalid_argument("Zoom level " + std::to_string(zoom) + " too high");
@@ -51,7 +61,8 @@ Ogre::Vector2 computeTileCoordinate(const sensor_msgs::msg::NavSatFix & point, i
   const int n = 1 << zoom;
   const double x = n * ((point.longitude + 180) / 360.0);
   const double y = n * (1 - (std::log(std::tan(lat) + 1 / std::cos(lat)) / M_PI)) / 2;
-  return Ogre::Vector2(x, y);
+  Vector2Double coord = {x, y};
+  return coord;
 }
 
 TileCoordinate fromWGS(const sensor_msgs::msg::NavSatFix & point, int zoom)
@@ -68,7 +79,7 @@ TileCoordinate fromWGS(const sensor_msgs::msg::NavSatFix & point, int zoom)
  * Compute the relative offset (-0.5, 0.5) of the WGS coordinate to the center of its tile.
  */
 Ogre::Vector2 tileOffset(const sensor_msgs::msg::NavSatFix & point, int zoom)
-{
+{ 
   auto coord = computeTileCoordinate(point, zoom);
   return Ogre::Vector2(coord.x - floor(coord.x) - 0.5, coord.y - floor(coord.y) - 0.5);
 }
