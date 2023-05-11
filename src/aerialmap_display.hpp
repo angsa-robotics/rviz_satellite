@@ -52,6 +52,7 @@ public:
 protected Q_SLOTS:
   void updateAlpha();
   void updateDrawUnder();
+  void updateFixedFrame();
   void updateTileUrl();
   void updateZoom();
   void updateBlocks();
@@ -83,6 +84,7 @@ protected:
   TileCoordinate centerTile() const;
 
   rviz_common::properties::StringProperty * tile_url_property_ = nullptr;
+  rviz_common::properties::StringProperty * fixed_frame_property_ = nullptr;
   rviz_common::properties::IntProperty * zoom_property_ = nullptr;
   rviz_common::properties::IntProperty * blocks_property_ = nullptr;
   rviz_common::properties::FloatProperty * alpha_property_ = nullptr;
@@ -99,7 +101,7 @@ protected:
   sensor_msgs::msg::NavSatFix::ConstSharedPtr last_fix_;
   bool tile_server_had_errors_ {false};
 
-  static const std::string MAP_FRAME;
+  static std::string MAP_FRAME;
   static const QString MESSAGE_STATUS;
   static const QString TILE_REQUEST_STATUS;
   static const QString PROPERTIES_STATUS;
