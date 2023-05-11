@@ -78,6 +78,14 @@ AerialMapDisplay::AerialMapDisplay()
   alpha_property_->setMax(1);
   alpha_property_->setShouldBeSaved(true);
 
+  z_offset_property_ =
+    new FloatProperty(
+    "Z Offset", -0.01, "Offset in Z direction", this,
+    SLOT(updateZOffset()));
+  z_offset_property_->setMin(-1000.0);
+  z_offset_property_->setMax(1000.0);
+  z_offset_property_->setShouldBeSaved(true);
+
   draw_under_property_ = new Property(
     "Draw Behind", false,
     "Rendering option, controls whether or not the map is always"
@@ -187,6 +195,12 @@ void AerialMapDisplay::updateAlpha()
 {
   auto t = rviz_ros_node_.lock()->get_raw_node()->get_clock()->now();
   updateAlpha(t);
+}
+
+void AerialMapDisplay::updateZOffset()
+{
+  resetTileServerError();
+  resetMap();
 }
 
 void AerialMapDisplay::updateDrawUnder()
@@ -505,7 +519,9 @@ void AerialMapDisplay::update(float, float)
   // "example tile", since their zoom should be uniform
   auto example_tile = tiles_.begin();
   auto center_tile_offset = tileOffset(*last_fix_, example_tile->first.coord.z);
-  Ogre::Vector3 aerial_map_offset(center_tile_offset.x, -center_tile_offset.y, 0.0);
+  // Use the Z offset. For some reason, there is a default offset of 1.0m, we have to substract it.
+  Ogre::Vector3 aerial_map_offset(center_tile_offset.x, -center_tile_offset.y, 
+    (- z_offset_property_->getFloat() - 1.0) / example_tile->second.tileSize());
 
   scene_node_->setPosition(
     sensor_translation - orientation_to_map *

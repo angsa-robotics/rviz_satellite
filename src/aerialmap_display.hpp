@@ -51,6 +51,7 @@ public:
 
 protected Q_SLOTS:
   void updateAlpha();
+  void updateZOffset();
   void updateDrawUnder();
   void updateProjectionFrame();
   void updateTileUrl();
@@ -87,6 +88,7 @@ protected:
   rviz_common::properties::StringProperty * projection_frame_property_ = nullptr;
   rviz_common::properties::IntProperty * zoom_property_ = nullptr;
   rviz_common::properties::IntProperty * blocks_property_ = nullptr;
+  rviz_common::properties::FloatProperty * z_offset_property_ = nullptr;
   rviz_common::properties::FloatProperty * alpha_property_ = nullptr;
   rviz_common::properties::FloatProperty * timeout_property_ = nullptr;
   rviz_common::properties::FloatProperty * tf_tolerance_property_ = nullptr;
